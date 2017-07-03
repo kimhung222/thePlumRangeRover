@@ -1,0 +1,36 @@
+.search-index-wrapper {
+    max-height: 475px;
+    overflow-y: auto;
+    background-color: #2c3e50;
+    color: #bdc3c7;
+    cursor: pointer;
+    position: fixed;
+    z-index: 200;
+    width: 600px;
+    right: 15%;
+    top: 105px;
+}
+
+.index-result-container {
+    font-size: 15px;
+    font-family: 'Sriracha';
+    position: relative;
+    border-style: solid;
+    border-width: 0.1px;
+}
+
+.index-result-name {
+    position: absolute;
+    left: 230px;
+    top: 10px;
+}
+
+.index-result-buttons {
+    position: absolute;
+    left: 40%;
+    bottom: 20px;
+}
+
+.game-item::hover {
+    background-color: rgba(127, 140, 141, 1.0);
+}
