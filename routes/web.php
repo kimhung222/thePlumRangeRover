@@ -119,6 +119,7 @@ Route::post('/calculate','PagesController@calculate');
 Route::get('/calculate','PagesController@calculate');
 Route::get('/checkout','PagesController@checkout');
 Route::get('/guide','PagesController@guide');
+Route::get('/test','TestController@Test');
 
 Auth::routes();
 

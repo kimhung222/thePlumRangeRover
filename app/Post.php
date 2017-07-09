@@ -2,10 +2,13 @@
 
 namespace App;
 
+use Cviebrock\EloquentSluggable\Sluggable;
+use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+    use Sluggable;
     protected $table = "posts";
 
     protected $fillable = [
@@ -37,7 +40,17 @@ class Post extends Model
         'is_new',
         'show_genres'
     ];
-
+    public function sluggable() {
+        return [
+            'slug' => [
+                'source' => 'title',
+            ]
+        ];
+    }
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
     public function categories() {
         return $this->belongsToMany('App\Category', 'post_has_categories');
     }

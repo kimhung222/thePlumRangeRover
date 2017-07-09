@@ -70,10 +70,14 @@ class PagesController extends Controller
 
 	public function detail($post_id){
 
-		$posts = Post::all();
+		//$posts = Post::all();
 		$screenshots = Screenshot::all();
-		$post = $posts->find($post_id);
-		$listscr = $screenshots = $screenshots->where('post_id',$post_id);
+		$post = Post::where('id', $post_id)
+            ->orWhere('slug', $post_id)
+            ->firstOrFail();
+		//dd($post);
+		//$post = $posts->find($post_id);
+		$listscr = $screenshots = $screenshots->where('post_id',$post->id);
 		$i = 0;
 		$scrshot = array();
 		foreach($listscr as $scr){
@@ -84,7 +88,7 @@ class PagesController extends Controller
 		$scrinit = $scrshot[0];
 		unset($scrshot[0]);
 
-		$requirement = Requirement::where('post_id',$post_id)->firstOrFail();
+		$requirement = Requirement::where('post_id',$post->id)->firstOrFail();
 		return view('dashboard.detail',compact('post','listscr','requirement','scrshot','scrinit'));
 	}
 
