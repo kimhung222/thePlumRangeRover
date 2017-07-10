@@ -12,9 +12,96 @@ class TestController extends Controller
     //
     public function Test(){
         $client = new Client();
+        $region_prices = array(
+            'jp' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'kr' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'nz' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'ca' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'uk' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'no' => array(
+                'price' => "",
+                'percent' =>""
+            ),                                                            
+        );
         $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), )); 
         $client->setClient($guzzleClient);
         $crawler = $client->request('GET', 'https://steamdb.info/app/203140/');
-        dd($crawler);
+        //dd($crawler->html());
+        // $crawler->filter(".cc")->each(function($node){
+        //     echo ($node->html());
+        // });
+        // Get the based price
+        //dd($crawler->html());
+        $crawler->filter('.owned')->each(function($node){
+            $node_parts = explode("\n",$node->text());
+            foreach($node_parts as $part){
+                if(strpos($part,"$") !== false){
+                    $base_price = $part;
+                }
+            }
+        });
+        
+        // Get another by region
+        // Japanese Yen: jp
+        // South Korean Won: kr
+        // New Zealand Dollar: nz
+        // Canadian Dollar: ca
+        // British Pound: uk
+        // Norwegian Krone: no
+        $crawler->filter('.table-prices > tbody > tr > td')->each(function($node){
+           echo($node->text());
+           // By the order of column better 
+        //    $elements = explode("\n",$node->html());
+        //    foreach($elements as $e){
+        //        if(strpos($e,$regions['jp'])){
+        //             filterTableRow($node->html());
+        //        }
+        //    }
+        });
+    }
+
+    public function removeHtmlTag(String $s){
+        $temp = "";
+        for($i=0;$i<count($s);$i++){
+            if($s[$i]=="<" || $s[$i]==">" ){
+                countinue;
+            }else{
+                $temp = $temp . $s[$i];
+            }
+        }
+        return $temp;
+    }
+
+    public function filterTableRow(String $s){
+        $converted_price = -1;
+        $price_discount = 99;
+        $elements = explode("\n",$s);
+        foreach($elements as $e){
+            if(strpos($e,"$")){
+                $converted_price = removeHtmlTag($e);
+            }
+            if(strpos($e,"price-discount")){
+                $price_discount = removeHtmlTag($e);
+            }
+        }
+        return array(
+            'price' => $converted_price,
+            'discount' => $price_discount
+        );
     }
 }
