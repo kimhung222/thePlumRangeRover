@@ -63,16 +63,41 @@ class TestController extends Controller
         // Canadian Dollar: ca
         // British Pound: uk
         // Norwegian Krone: no
-        $crawler->filter('.table-prices > tbody > tr > td')->each(function($node){
-           echo($node->text());
-           // By the order of column better 
-        //    $elements = explode("\n",$node->html());
-        //    foreach($elements as $e){
-        //        if(strpos($e,$regions['jp'])){
-        //             filterTableRow($node->html());
-        //        }
-        //    }
+        $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function($node){
+            return $node->text();
         });
+        foreach($text_tables as $text){
+            if(strstr($text,"Yen")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['jp']['price'] = $tokens[4];
+                $region_prices['jp']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"South Korean Won")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['kr']['price'] = $tokens[4];
+                $region_prices['kr']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"New Zealand Dollar")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['nz']['price'] = $tokens[4];
+                $region_prices['nz']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"Canadian Dollar")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['ca']['price'] = $tokens[4];
+                $region_prices['ca']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"British Pound")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['uk']['price'] = $tokens[4];
+                $region_prices['uk']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"Norwegian Krone")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['no']['price'] = $tokens[4];
+                $region_prices['no']['percent'] = $tokens[5];
+            }             
+        }
     }
 
     public function removeHtmlTag(String $s){
