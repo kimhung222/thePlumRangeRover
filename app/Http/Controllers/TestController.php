@@ -95,9 +95,30 @@ class TestController extends Controller
             if(strstr($text,"Norwegian Krone")){
                 $tokens = explode("\n",trim($text,"\""));
                 $region_prices['no']['price'] = $tokens[4];
-                $region_prices['no']['percent'] = $tokens[5];
+                $region_prices['no']['percent'] =  $tokens[5];
             }             
         }
+        $percent_price = array();
+        foreach($region_prices as $price){
+            if($this->convertPercent2Int($price['percent']) > -13 ){
+                $price['price'] = floatval(str_replace("$","",$price['price']));
+                array_push($percent_price,$price);
+            }
+        }
+        $max = $percent_price[0]['price'];
+        for($i=0;$i<count($percent_price);$i++){
+            for($j=$i+1;$j<count($percent_price);$j++){
+                if($percent_price[$i]['price'] > $percent_price[$j]['price']){
+                    $temp = $percent_price[$i];
+                    $percent_price[$i] = $percent_price[$j];
+                    $percent_price[$j] = $temp;
+                }
+            }
+        }
+        $percent_price[0]['price'] = "$".$percent_price[0]['price'];
+        $chosen_region = array_search($percent_price[0],$region_prices);
+        $final_price = floatval(str_replace("$","",$price['price'])) *22000;
+        
     }
 
     public function removeHtmlTag(String $s){
@@ -128,5 +149,12 @@ class TestController extends Controller
             'price' => $converted_price,
             'discount' => $price_discount
         );
+    }
+    
+
+    public function convertPercent2Int($number){
+        $number = str_replace("%","",$number);
+        $number = str_replace("+","",$number);
+        return floatval($number);
     }
 }
