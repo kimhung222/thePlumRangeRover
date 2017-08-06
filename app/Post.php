@@ -38,7 +38,10 @@ class Post extends Model
         'is_popular',
         'show_tag',
         'is_new',
-        'show_genres'
+        'show_genres',
+        'slug',
+        'title',
+        'chosenRegion'
     ];
     public function sluggable() {
         return [

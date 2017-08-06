@@ -40,7 +40,7 @@ class TestController extends Controller
         );
         $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), )); 
         $client->setClient($guzzleClient);
-        $crawler = $client->request('GET', 'https://steamdb.info/app/203140/');
+        $crawler = $client->request('GET', 'https://steamdb.info/app/585910/');
         //dd($crawler->html());
         // $crawler->filter(".cc")->each(function($node){
         //     echo ($node->html());
@@ -118,7 +118,7 @@ class TestController extends Controller
         $percent_price[0]['price'] = "$".$percent_price[0]['price'];
         $chosen_region = array_search($percent_price[0],$region_prices);
         $final_price = floatval(str_replace("$","",$price['price'])) *22000;
-        
+        dd($this->roundPrice($final_price));
     }
 
     public function removeHtmlTag(String $s){
@@ -156,5 +156,16 @@ class TestController extends Controller
         $number = str_replace("%","",$number);
         $number = str_replace("+","",$number);
         return floatval($number);
+    }
+
+    public function roundPrice($number){
+        $number = round(intval($number)/1000);
+        $balance = $number % 10;
+        if($balance%10 >=5 ){
+            $number = $number + 10 - ($balance % 5);
+        }else{
+            $number = $number - $balance;
+        }       
+        return intval($number*1000);
     }
 }
