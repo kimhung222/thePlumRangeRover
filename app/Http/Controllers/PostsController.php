@@ -147,7 +147,7 @@ class PostsController extends Controller
             $post->is_free = 0;
         }
         $ress = (new PagesController)->comparePrice($link);
-        $price = ($ress['final_price'] % 1000);
+        $price = ($ress['final_price'] / 1000)%1000;
 		$price = $price + (5 - $price % 5);
 		$card_price = round($price*1.25);
 		$card_price = $card_price + (10 - $card_price%10);
