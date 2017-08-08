@@ -43,7 +43,7 @@
 				@endif
 			@endif
 			@foreach ($posts as $p)
-			<a style="text-decorations:none;"" href="{{ URL::to('posts/'.$p->id) }}">
+			<a style="text-decorations:none;"" href="{{ URL::to('posts/'.$p->slug) }}">
 				<div class="game-float-wrapper">
 					<div class="game-item">
 						<div>

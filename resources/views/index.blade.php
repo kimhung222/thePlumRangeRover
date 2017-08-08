@@ -108,7 +108,7 @@
                                                         <p class="btn-add">
                                                             <i class="fa fa-shopping-cart"></i><a href="https://www.messenger.com/t/shopgamecanhcut" class="hidden-sm">Liên hệ</a></p>
                                                         <p class="btn-details">
-                                                            <i class="fa fa-list"></i><a href="/posts/{{$discount_posts[$i+$j]->id}}" class="hidden-sm">Chi tiết</a></p>
+                                                            <i class="fa fa-list"></i><a href="/posts/{{$discount_posts[$i+$j]->slug}}" class="hidden-sm">Chi tiết</a></p>
                                                     </div>
                                                     <div class="clearfix">
                                                     </div>
@@ -158,7 +158,7 @@
                                 <p class="btn-add">
                                     <i class="fa fa-shopping-cart"></i><a href="https://www.messenger.com/t/shopgamecanhcut" class="hidden-sm">Liên Hệ</a></p>
                                 <p class="btn-details">
-                                    <i class="fa fa-list"></i><a href="/posts/{{$p->id}}" class="hidden-sm">Chi Tiết</a></p>
+                                    <i class="fa fa-list"></i><a href="/posts/{{$p->slug}}" class="hidden-sm">Chi Tiết</a></p>
                             </div>
                             <div class="clearfix">
                             </div>
