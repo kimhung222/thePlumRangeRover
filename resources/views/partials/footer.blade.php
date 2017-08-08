@@ -66,7 +66,7 @@
 
     <div class="footer-bottom">
         <div class="container">
-            <p class="pull-left"> Developed by <a href="https://www.facebook.com/leonkygami1">Mei Ling</a> and <a href="https://www.facebook.com/beep.beep.319">TXL</a>. </p>
+            <p class="pull-left"> Developed by <a href="https://www.facebook.com/leonkyagami1">Mei Ling</a> and <a href="https://www.facebook.com/beep.beep.319">TXL</a>. </p>
             <div class="pull-right">
                 <ul class="nav nav-pills payments">
                     <li><i class="fa fa-cc-visa"></i></li>

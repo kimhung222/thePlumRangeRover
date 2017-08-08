@@ -190,7 +190,7 @@ body{
         var btn = $(this);
         $.ajax({
             type: 'POST',
-            url: "http://meiling.com/index_management/update",
+            url: "http://www.canhcutshop.com/index_management/update",
             data: {
                 "_token": "{{ csrf_token() }}",
                 'post_id': btn.attr("postid"),
@@ -232,7 +232,7 @@ body{
         var btn = $(this);
         $.ajax({
             type: 'POST',
-            url: "http://meiling.com/index_management/update",
+            url: "http://www.canhcutshop.com/index_management/update",
             data: {
                 "_token": "{{ csrf_token() }}",
                 'post_id': btn.attr("post_id"),

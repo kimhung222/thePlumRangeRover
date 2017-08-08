@@ -61,7 +61,7 @@
 				<td class="text-center">{{$o->facebook}}</td>
 				<td class="text-center">{{$o->total}}</td>
 				<td class="text-center">
-					<a href="{{ URL::to('orders/'.$o->id) }}">
+					<a href="{{ URL::to('orders/'.$o->slug) }}">
 						<button class="btn btn-success">
 							Xem
 						</button>
