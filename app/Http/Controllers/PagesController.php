@@ -125,7 +125,7 @@ class PagesController extends Controller
 		$name = $data[$game_id]['data']['name'];
 		$background = $data[$game_id]['data']['background'];
 		$res = $this->comparePrice($steam_id);
-		$price = ($res['final_price'] % 1000);
+		$price = ($res['final_price'] / 1000)%1000;
 		$price = $price + (5 - $price % 5);
 		$card_price = round($price*1.25);
 		$card_price = $card_price + (10 - $card_price%10);
