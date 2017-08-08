@@ -168,7 +168,7 @@
             @endforeach
             </div>
         </div>
-        <center> <a class="btn btn-success" style="width:30%" href="http://meiling.com/listgames"> Xem Thêm </a> </center>
+        <center> <a class="btn btn-success" style="width:30%" href="/listgames"> Xem Thêm </a> </center>
         <div class="space-3"></div>
     </div>
    
