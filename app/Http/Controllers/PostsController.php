@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Http\Controllers\PagesController;
 use App\Http\Requests;
 use App\Post;
 use App\Screenshot;
@@ -88,7 +88,8 @@ class PostsController extends Controller
         $input = $request->all();
         $link = trim($input['link']);
         $link = str_replace("http://store.steampowered.com/app/","",$link);
-        $link = str_replace("/","",$link);
+        $link = explode('/',$link);
+        $link = $link[0];        
         $api_link = 'http://store.steampowered.com/api/appdetails?appids='.$link.'&cc=my';
         $game_id = intval($link);
         $result = file_get_contents($api_link);
@@ -107,6 +108,7 @@ class PostsController extends Controller
         $post = new Post();
         $post->name = $data[$game_id]['data']['name'];
         $post->slug = str_replace(" ","-",$post->name);
+
         $post->type = $data[$game_id]['data']['type'];
         $post->appid = $data[$game_id]['data']['steam_appid'];
         $post->required_age = $data[$game_id]['data']['required_age'];
@@ -145,12 +147,17 @@ class PostsController extends Controller
         else{
             $post->is_free = 0;
         }
-
-        $post->current_price = round($data[$game_id]['data']['price_overview']['final']/100*47/9.5);
+        $ress = (new PagesController)->comparePrice($link);
+        $price = ($ress['final_price'] / 1000)%1000;
+		$price = $price + (5 - $price % 5);
+		$card_price = round($price*1.25);
+		$card_price = $card_price + (10 - $card_price%10);
+        $post->current_price = $price;
         $post->current_price = $post->current_price  + (5 - $post->current_price%5);
         $post->origin_price =  round($data[$game_id]['data']['price_overview']['initial']/100*47/9.5);
         $post->origin_price -  $post->origin_price + (5 -  $post->origin_price%5);
-        $post->card_price = $post->current_price*1.25 + (10-$post->current_price*1.25%10);
+        $post->card_price = $card_price;
+        $post->chosenRegion = $ress['chosen_region'];
         if($data[$game_id]['data']['price_overview']['discount_percent'] > 0){
             $post->is_on_discount = 1;
         }

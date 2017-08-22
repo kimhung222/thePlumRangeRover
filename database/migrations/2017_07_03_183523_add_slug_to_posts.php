@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddStatusToOrdersTable extends Migration
+class AddSlugToPosts extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class AddStatusToOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        //
+        Schema::table('posts', function (Blueprint $table) {
             //
-            $table->string('status');
-        });
+            $table->string('slug');
+        });         
     }
 
     /**
@@ -26,8 +27,10 @@ class AddStatusToOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::table('orders', function (Blueprint $table) {
+        //
+        Schema::table('posts', function (Blueprint $table) {
             //
-        });
+            $table->dropColumn('slug');
+        }); 
     }
 }

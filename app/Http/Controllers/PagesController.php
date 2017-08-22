@@ -1,19 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use GuzzleHttp\Client as GuzzleClient;
+use Illuminate\Cookie\CookieJar;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
-use App\Post;
-use App\Screenshot;
 use App\Requirement;
-use App\Gerne;
+use App\Screenshot;
+use Goutte\Client;
 use App\Category;
 use App\Order;
-use DB;
+use App\Gerne;
+use App\Post;
 use Cookie;
-use Illuminate\Cookie\CookieJar;
+use DB;
+
 
 class PagesController extends Controller
 {
@@ -50,7 +51,6 @@ class PagesController extends Controller
 
 		$popular_posts = $posts = Post::where('is_popular','=','1')->get();
 		$count_pp = count($popular_posts);
-		// dd($popular_posts[1]);
 		return view('index',compact('new_posts','discount_posts','length','popular_posts','count_pp'));
 	}
 
@@ -70,10 +70,12 @@ class PagesController extends Controller
 
 	public function detail($post_id){
 
-		$posts = Post::all();
+		//$posts = Post::all();
 		$screenshots = Screenshot::all();
-		$post = $posts->find($post_id);
-		$listscr = $screenshots = $screenshots->where('post_id',$post_id);
+		$post = Post::where('id', $post_id)
+            ->orWhere('slug', $post_id)
+            ->firstOrFail();
+		$listscr = $screenshots = $screenshots->where('post_id',$post->id);
 		$i = 0;
 		$scrshot = array();
 		foreach($listscr as $scr){
@@ -84,7 +86,7 @@ class PagesController extends Controller
 		$scrinit = $scrshot[0];
 		unset($scrshot[0]);
 
-		$requirement = Requirement::where('post_id',$post_id)->firstOrFail();
+		$requirement = Requirement::where('post_id',$post->id)->firstOrFail();
 		return view('dashboard.detail',compact('post','listscr','requirement','scrshot','scrinit'));
 	}
 
@@ -96,8 +98,11 @@ class PagesController extends Controller
 			return view('estimate_error',compact('message'));
 		}
 		$link = str_replace("http://store.steampowered.com/app/","",$link);
+		$link = explode('/',$link);
+		$link = $link[0];
+		$steam_id = $link;
 		$link = str_replace("/","",$link);
-		$api_link = 'http://store.steampowered.com/api/appdetails?appids='.$link.'&cc=my';
+		$api_link = 'http://store.steampowered.com/api/appdetails?appids='.$link;
 		// Handle Price
 		//
 		$game_id = intval($link);
@@ -119,11 +124,12 @@ class PagesController extends Controller
 		$header_image = $data[$game_id]['data']['header_image'];
 		$name = $data[$game_id]['data']['name'];
 		$background = $data[$game_id]['data']['background'];
-		$price = $data[$game_id]['data']['price_overview']['final']/100;
-		$price = round($price*47/9.5);
-		$price = $price + (5 - $price%5);
+		$res = $this->comparePrice($steam_id);
+		$price = ($res['final_price'] / 1000)%1000;
+		$price = $price + (5 - $price % 5);
 		$card_price = round($price*1.25);
 		$card_price = $card_price + (10 - $card_price%10);
+		$name = $name . ' ' . $res['chosen_region'];
 		$comming_soon = $data[$game_id]['data']['release_date']['coming_soon'];
 		if($comming_soon){
 			$comming_soon = "Pre-order : ";
@@ -278,4 +284,167 @@ class PagesController extends Controller
 		}
 		return view('posts.posts_all',compact('posts','value'));
 	}
+
+	public function comparePrice($steam_id){
+        $client = new Client();
+        $region_prices = array(
+            'jp' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'kr' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'nz' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'ca' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'uk' => array(
+                'price' => "",
+                'percent' =>""
+            ),
+            'no' => array(
+                'price' => "",
+                'percent' =>""
+            ),                                                            
+        );
+        $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), )); 
+        $client->setClient($guzzleClient);
+        $crawler = $client->request('GET', 'https://steamdb.info/app/'. $steam_id .'/');
+        //dd($crawler->html());
+        // $crawler->filter(".cc")->each(function($node){
+        //     echo ($node->html());
+        // });
+        // Get the based price
+        //dd($crawler->html());
+        $crawler->filter('.owned')->each(function($node){
+            $node_parts = explode("\n",$node->text());
+            foreach($node_parts as $part){
+                if(strpos($part,"$") !== false){
+                    $base_price = $part;
+                }
+            }
+        });
+        
+        // Get another by region
+        // Japanese Yen: jp
+        // South Korean Won: kr
+        // New Zealand Dollar: nz
+        // Canadian Dollar: ca
+        // British Pound: uk
+        // Norwegian Krone: no
+        $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function($node){
+            return $node->text();
+        });
+        foreach($text_tables as $text){
+            if(strstr($text,"Yen")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['jp']['price'] = $tokens[4];
+                $region_prices['jp']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"South Korean Won")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['kr']['price'] = $tokens[4];
+                $region_prices['kr']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"New Zealand Dollar")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['nz']['price'] = $tokens[4];
+                $region_prices['nz']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"Canadian Dollar")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['ca']['price'] = $tokens[4];
+                $region_prices['ca']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"British Pound")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['uk']['price'] = $tokens[4];
+                $region_prices['uk']['percent'] = $tokens[5];
+            }
+            if(strstr($text,"Norwegian Krone")){
+                $tokens = explode("\n",trim($text,"\""));
+                $region_prices['no']['price'] = $tokens[4];
+                $region_prices['no']['percent'] =  $tokens[5];
+            }             
+        }
+        $percent_price = array();
+        foreach($region_prices as $price){
+            if($this->convertPercent2Int($price['percent']) > -13 ){
+                $price['price'] = floatval(str_replace("$","",$price['price']));
+                array_push($percent_price,$price);
+            }
+        }
+        $max = $percent_price[0]['price'];
+        for($i=0;$i<count($percent_price);$i++){
+            for($j=$i+1;$j<count($percent_price);$j++){
+                if($percent_price[$i]['price'] > $percent_price[$j]['price']){
+                    $temp = $percent_price[$i];
+                    $percent_price[$i] = $percent_price[$j];
+                    $percent_price[$j] = $temp;
+                }
+            }
+        }
+        $percent_price[0]['price'] = "$".$percent_price[0]['price'];
+        $chosen_region = array_search($percent_price[0],$region_prices);
+        $final_price = floatval(str_replace("$","",$price['price'])) *22000;
+		$res = array(
+			'chosen_region' => $chosen_region,
+			'final_price'   => $final_price
+		);
+        return $res;
+    }
+
+    public function removeHtmlTag(String $s){
+        $temp = "";
+        for($i=0;$i<count($s);$i++){
+            if($s[$i]=="<" || $s[$i]==">" ){
+                countinue;
+            }else{
+                $temp = $temp . $s[$i];
+            }
+        }
+        return $temp;
+    }
+
+    public function filterTableRow(String $s){
+        $converted_price = -1;
+        $price_discount = 99;
+        $elements = explode("\n",$s);
+        foreach($elements as $e){
+            if(strpos($e,"$")){
+                $converted_price = removeHtmlTag($e);
+            }
+            if(strpos($e,"price-discount")){
+                $price_discount = removeHtmlTag($e);
+            }
+        }
+        return array(
+            'price' => $converted_price,
+            'discount' => $price_discount
+        );
+    }
+    
+
+    public function convertPercent2Int($number){
+        $number = str_replace("%","",$number);
+        $number = str_replace("+","",$number);
+        return floatval($number);
+    }
+
+    public function roundPrice($number){
+        $number = round(intval($number)/1000);
+        $balance = $number % 10;
+        if($balance%10 >=5 ){
+            $number = $number + 10 - ($balance % 5);
+        }else{
+            $number = $number - $balance;
+        }       
+        return intval($number*1000);
+    }
 }

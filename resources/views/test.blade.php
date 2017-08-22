@@ -63,7 +63,7 @@
 								<div class="form-group">
 									<label class="control-label col-sm-2" for="facebook">Facebook:</label>
 									<div class="col-sm-10">
-										<input type="text" class="form-control" name="facebook" id="facebook" placeholder="Ví dụ: https://www.facebook.com/leonkygami1" required>
+										<input type="text" class="form-control" name="facebook" id="facebook" placeholder="Ví dụ: https://www.facebook.com/leonkyagami1" required>
 									</div>
 								</div>
 								<div class="form-group">

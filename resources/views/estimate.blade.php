@@ -17,7 +17,7 @@
 				</button>
 			</form> -->
 			{!! Form::open(['url' => 'calculate'])  !!}
-				<input type="text" name="link" placeholder="http://store.steampowered.com/app/XXXXX/" style="font-size:15px">
+				<input type="text" name="link" placeholder="http://store.steampowered.com/app/SteamID/Tên_Game" style="font-size:15px">
 				</br>
 				</br>
 				</br>
