@@ -106,6 +106,7 @@ class PostsController extends Controller
         // }
         $post = new Post();
         $post->name = $data[$game_id]['data']['name'];
+        $post->slug = str_replace(" ","-",$post->name);
         $post->type = $data[$game_id]['data']['type'];
         $post->appid = $data[$game_id]['data']['steam_appid'];
         $post->required_age = $data[$game_id]['data']['required_age'];
@@ -243,6 +244,7 @@ class PostsController extends Controller
         $input = $request->all();
         /* */
         $post->name = $input['name'];
+        $post->slug = str_replace(" ","-",$post->name);
         $post->is_released = 1;
         $post->current_price = $input['current_price'];
         $post->origin_price = $input['origin_price'];
