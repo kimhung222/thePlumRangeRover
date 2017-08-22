@@ -107,8 +107,7 @@ class PostsController extends Controller
         // }
         $post = new Post();
         $post->name = $data[$game_id]['data']['name'];
-        $post->slug = str_replace(" ","-",$post->name);
-
+        $post->slug = str_replace(" ","-",$data[$game_id]['data']['name']);
         $post->type = $data[$game_id]['data']['type'];
         $post->appid = $data[$game_id]['data']['steam_appid'];
         $post->required_age = $data[$game_id]['data']['required_age'];
@@ -155,7 +154,7 @@ class PostsController extends Controller
         $post->current_price = $price;
         $post->current_price = $post->current_price  + (5 - $post->current_price%5);
         $post->origin_price =  round($data[$game_id]['data']['price_overview']['initial']/100*47/9.5);
-        $post->origin_price -  $post->origin_price + (5 -  $post->origin_price%5);
+        $post->origin_price =  $post->origin_price + (5 -  $post->origin_price%5);
         $post->card_price = $card_price;
         $post->chosenRegion = $ress['chosen_region'];
         if($data[$game_id]['data']['price_overview']['discount_percent'] > 0){
@@ -251,7 +250,7 @@ class PostsController extends Controller
         $input = $request->all();
         /* */
         $post->name = $input['name'];
-        $post->slug = str_replace(" ","-",$post->name);
+        $post->slug = str_replace(" ","-",$input['name']);
         $post->is_released = 1;
         $post->current_price = $input['current_price'];
         $post->origin_price = $input['origin_price'];
