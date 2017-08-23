@@ -2,8 +2,6 @@
 
 namespace App;
 
-use Cviebrock\EloquentSluggable\Sluggable;
-use Cviebrock\EloquentSluggable\SluggableScopeHelpers;
 use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
@@ -40,16 +38,15 @@ class Post extends Model
         'is_new',
         'show_genres',
         'slug',
-        'title',
         'chosenRegion'
     ];
-    public function sluggable() {
-        return [
-            'slug' => [
-                'source' => 'title',
-            ]
-        ];
-    }
+//    public function sluggable() {
+//        return [
+//            'slug' => [
+//                'source' => 'slug',
+//            ]
+//        ];
+//    }
     public function getRouteKeyName()
     {
         return 'slug';
@@ -67,7 +64,7 @@ class Post extends Model
     }
 
     public function metacritic() {
-        return $htis->hasOne('App\Metacritic');
+        return $this->hasOne('App\Metacritic');
     }
 
     public function movies() {
