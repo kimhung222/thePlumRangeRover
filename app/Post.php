@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    use Sluggable;
     protected $table = "posts";
-
     protected $fillable = [
         'type',
         'name',
