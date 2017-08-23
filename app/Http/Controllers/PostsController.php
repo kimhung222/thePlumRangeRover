@@ -114,6 +114,7 @@ class PostsController extends Controller
         $post->detailed_description = $data[$game_id]['data']['detailed_description'];
         $post->about_the_game = $data[$game_id]['data']['about_the_game'];
         $post->short_description = $data[$game_id]['data']['short_description'];
+        $post->chosenRegion = "";
         if(array_key_exists('reviews',$data[$game_id]['data']['pc_requirements'])){
             $post->reviews = $data[$game_id]['data']['reviews'];
         }
