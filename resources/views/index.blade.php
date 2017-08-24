@@ -45,7 +45,7 @@
                                             <div class="col-md-9 text-left">
                                                 <span data-animation="animated bounceInDown" style="font-family:Bangers;color:rgba(231, 76, 60,1.0);font-size:50px;background-color:rgba(236, 240, 241,0.7);padding:15px;">{{$popular_posts[$j]->name}}</span>
                                                     <div class="space-2"></div>
-                                                <span data-animation="animated bounceInUp" style="font-family:Quicksand;color:black;font-size:30px;background-color:rgba(236, 240, 241,1.0);padding:10px;">{{$popular_posts[$j]->current_price}}</span>
+                                                <span data-animation="animated bounceInUp" style="font-family:Quicksand;color:black;font-size:30px;background-color:rgba(236, 240, 241,1.0);padding:10px;">{{$popular_posts[$j]->current_price}}.000</span>
                                             </div>
                                         </div>
                                     </div>
@@ -101,7 +101,7 @@
                                                     <div class="row">
                                                         <div class="price col-md-6">
                                                             <h5 class="price-text-color">
-                                                                {{$discount_posts[$i+$j]->current_price}}</h5>
+                                                                {{$discount_posts[$i+$j]->current_price}}.000</h5>
                                                         </div>
                                                     </div>
                                                     <div class="separator clear-left">
@@ -123,14 +123,6 @@
 
                     </div>
                 </div>
-
-
-
-
-
-
-
-
             </div>
         </div>
 
@@ -151,7 +143,7 @@
                             <div class="row">
                                 <div class="price col-md-6">
                                     <h5 class="price-text-color">
-                                        {{$p->current_price}}</h5>
+                                        {{$p->current_price}}.000</h5>
                                 </div>
                             </div>
                             <div class="separator clear-left">
