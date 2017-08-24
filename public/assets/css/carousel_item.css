@@ -16,9 +16,8 @@
     border-radius: 0 0 5px 5px;
     margin-top: 1px;
 }
-
-.col-item:hover .info {
-    background-color: #F5F5DC;
+.col-item:hover{
+    filter: brightness(90%);
 }
 
 .col-item .price {
@@ -90,4 +89,14 @@
 
 [data-slide="prev"] {
     margin-right: 10px;
+}
+
+.classify-name{
+    text-align: center;
+    padding: 10px;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap !important;
+    word-wrap: break-word;
+    white-space: normal;
+    color:#2c3e50
 }

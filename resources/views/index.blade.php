@@ -99,16 +99,23 @@
                                                 </div>
                                                 <div class="info">
                                                     <div class="row">
-                                                        <div class="price col-md-6">
+                                                        <div class="classify-name">{{$discount_posts[$i+$j]->name}}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="price" style="width:50%;padding-left: 10%">
                                                             <h5 class="price-text-color">
                                                                 {{$discount_posts[$i+$j]->current_price}}.000</h5>
+                                                        </div>
+                                                        <div class="price" style="width:50%;padding-left: 10%">
+                                                            <h5 class="price-text-color">
+                                                                {{$discount_posts[$i+$j]->card_price}}.000(CARD)</h5>
                                                         </div>
                                                     </div>
                                                     <div class="separator clear-left">
                                                         <p class="btn-add">
-                                                            <i class="fa fa-shopping-cart"></i><a href="https://www.messenger.com/t/shopgamecanhcut" class="hidden-sm">Liên hệ</a></p>
+                                                            <i class="fa fa-shopping-cart"></i><a href="https://www.messenger.com/t/shopgamecanhcut" class="hidden-sm" target="_blank">Liên hệ</a></p>
                                                         <p class="btn-details">
-                                                            <i class="fa fa-list"></i><a href="/posts/{{$discount_posts[$i+$j]->slug}}" class="hidden-sm">Chi tiết</a></p>
+                                                            <i class="fa fa-list"></i><a href="/posts/{{$discount_posts[$i+$j]->slug}}" class="hidden-sm" target="_blank">Chi tiết</a></p>
                                                     </div>
                                                     <div class="clearfix">
                                                     </div>
@@ -141,16 +148,23 @@
                         </div>
                         <div class="info">
                             <div class="row">
-                                <div class="price col-md-6">
+                                <div class="classify-name">{{$p->name}}</div>
+                            </div>
+                            <div class="row">
+                                <div class="price" style="width:50%;padding-left: 10%">
+                                        <h5 class="price-text-color">
+                                            {{$p->current_price}}.000</h5>
+                                </div>
+                                <div class="price" style="width:50%;padding-left: 10%">
                                     <h5 class="price-text-color">
-                                        {{$p->current_price}}.000</h5>
+                                        {{$p->card_price}}.000(CARD)</h5>
                                 </div>
                             </div>
                             <div class="separator clear-left">
                                 <p class="btn-add">
-                                    <i class="fa fa-shopping-cart"></i><a href="https://www.messenger.com/t/shopgamecanhcut" class="hidden-sm">Liên Hệ</a></p>
+                                    <i class="fa fa-shopping-cart"></i><a href="https://www.messenger.com/t/shopgamecanhcut" class="hidden-sm" target="_blank">Liên Hệ</a></p>
                                 <p class="btn-details">
-                                    <i class="fa fa-list"></i><a href="/posts/{{$p->slug}}" class="hidden-sm">Chi Tiết</a></p>
+                                    <i class="fa fa-list"></i><a href="/posts/{{$p->slug}}" class="hidden-sm" target="_blank">Chi Tiết</a></p>
                             </div>
                             <div class="clearfix">
                             </div>

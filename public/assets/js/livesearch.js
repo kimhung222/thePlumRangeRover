@@ -20,7 +20,9 @@ $('#livesearch').on('keyup', function() {
                         data[i].name +
                         "</div>" +
                         "<div class='price'>" +
-                        data[i].current_price +
+                        data[i].current_price + ".000" +
+                        "<span style='margin-left:30%'>" + data[i].card_price + ".000(CARD)"+
+                        "</span>" +
                         "</div>" +
                         "</div>" +
                         "</a>";

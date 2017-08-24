@@ -142,7 +142,7 @@ button {
     position: relative;
 }
 
-.game-item::hover {
+.game-item:hover {
     background-color: rgba(127, 140, 141, 1.0);
 }
 
@@ -279,7 +279,9 @@ button {
     border-bottom-right-radius: 0px!important;
     border-bottom-left-radius: 0px!important;
 }
-
+/*.list-group>.col-sm-3:hover{*/
+    /*background-color:#ecf0f1;*/
+/*}*/
 
 /* POST */
 
