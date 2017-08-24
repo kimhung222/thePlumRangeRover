@@ -70,7 +70,7 @@
             <div class="row">
                 <div class="row">
                     <div class="col-md-9">
-                        <h1><span class="label label-danger">Đang khuyến mãi</span></h1>
+                        <h1><span class="label label-danger">Bán chạy</span></h1>
                     </div>
                     <div class="col-md-3">
                         <!-- Controls -->
