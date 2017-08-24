@@ -731,3 +731,8 @@ button {
     left: 40%;
     bottom: 20px;
 }
+
+.wrap-all{
+    background-color: rgba(52, 73, 94, 0.6);
+}
+

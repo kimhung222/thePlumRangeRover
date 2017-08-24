@@ -1,6 +1,15 @@
 
 @extends('layout.layout')
 @section('body.content')
+<style>
+    body{
+        background-image: url(../assets/wpp.jpg);
+        background-size: 100%;
+        background-attachment: fixed;
+        background-position: center;
+    }
+</style>
+<div class="wrap-all">
 <div class="greet">
 	<div class="container">
 		<center>
@@ -13,7 +22,7 @@
 </div>
 <!-- Carousel -->
 <div class="space-1"></div>
- <div class="total-wrapper">
+    <div class="total-wrapper">
         <div class="container">
             <div class="col-md-12">
                 <div id="first-slider">
@@ -177,5 +186,7 @@
         <center> <a class="btn btn-success" style="width:30%" href="/listgames"> Xem Thêm </a> </center>
         <div class="space-3"></div>
     </div>
-   
+        </div>
+    </div>
+</div>
 @stop
