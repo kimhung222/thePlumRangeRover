@@ -33,7 +33,7 @@
 
 			Mọi thắc mắc hoặc các vấn đề cần giải quyết vui lòng liên lạc:
 			<ul>
-				<li><strong>Facebook: https://www.facebook.com/hoang.vo.31191</li>
+				<li><strong>Facebook: https://www.facebook.com/hoang.vo.31191</strong></li>
 				<li><strong> SĐT</strong> :</li>
 				<li><strong> Email</strong>:</li>
 			</ul> 

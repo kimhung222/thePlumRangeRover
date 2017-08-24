@@ -107,9 +107,11 @@
 	{!! Form::close() !!}
 </div>
 	<script src="//cdn.ckeditor.com/4.5.11/standard/ckeditor.js"></script>
-	CKEDITOR.replace( 'minimum' );
-	CKEDITOR.replace( 'recommended' );
-	CKEDITOR.replace( 'short_description' );
+	<script>
+        CKEDITOR.replace( 'minimum' );
+        CKEDITOR.replace( 'recommended' );
+        CKEDITOR.replace( 'short_description' );
+	</script>
 	<script type="text/javascript">
 		function add(type){
 			var linh = document.getElementById('gerne_handle');
