@@ -12,7 +12,7 @@ $('#suggest').on('keyup', function() {
             for (var i = 0; i < data.length; i++) {
                 res.push({
                     label: data[i].name,
-                    value: "/posts/" + data[i].id
+                    value: "/posts/" + data[i].slug
                 });
             }
             $("#suggest").autocomplete({

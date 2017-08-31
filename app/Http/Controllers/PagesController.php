@@ -125,7 +125,7 @@ class PagesController extends Controller
 		$name = $data[$game_id]['data']['name'];
 		$background = $data[$game_id]['data']['background'];
 		$res = $this->comparePrice($steam_id);
-		$price = ($res['final_price'] / 1000)%1000;
+		$price =intval(($res['final_price'])/1000);
 		$price = $price + (5 - $price % 5);
 		$card_price = round($price*1.25);
 		$card_price = $card_price + (10 - $card_price%10);
@@ -390,9 +390,8 @@ class PagesController extends Controller
                 }
             }
         }
-        $percent_price[0]['price'] = "$".$percent_price[0]['price'];
         $chosen_region = array_search($percent_price[0],$region_prices);
-        $final_price = floatval(str_replace("$","",$price['price'])) *22000;
+        $final_price = floatval($percent_price[0]['price'])*22000;
 		$res = array(
 			'chosen_region' => $chosen_region,
 			'final_price'   => $final_price
@@ -400,7 +399,7 @@ class PagesController extends Controller
         return $res;
     }
 
-    public function removeHtmlTag(String $s){
+    public function removeHtmlTag( $s){
         $temp = "";
         for($i=0;$i<count($s);$i++){
             if($s[$i]=="<" || $s[$i]==">" ){
@@ -412,7 +411,7 @@ class PagesController extends Controller
         return $temp;
     }
 
-    public function filterTableRow(String $s){
+    public function filterTableRow($s){
         $converted_price = -1;
         $price_discount = 99;
         $elements = explode("\n",$s);
