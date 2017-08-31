@@ -235,7 +235,6 @@ class PagesController extends Controller
 	public function store(Request $request){
 		$input = $request->all();
 		$order = new Order();
-		// dd($input);
 		$order->name = $input['name'];
 		$order->type = 'NORMAL';
 		$order->payments =  $input['payments'];
@@ -285,52 +284,53 @@ class PagesController extends Controller
 		return view('posts.posts_all',compact('posts','value'));
 	}
 
-	public function comparePrice($steam_id){
+	public function comparePrice($steam_id)
+    {
         $client = new Client();
         $region_prices = array(
             'jp' => array(
                 'price' => "",
-                'percent' =>""
+                'percent' => ""
             ),
             'kr' => array(
                 'price' => "",
-                'percent' =>""
+                'percent' => ""
             ),
             'nz' => array(
                 'price' => "",
-                'percent' =>""
+                'percent' => ""
             ),
             'ca' => array(
                 'price' => "",
-                'percent' =>""
+                'percent' => ""
             ),
             'uk' => array(
                 'price' => "",
-                'percent' =>""
+                'percent' => ""
             ),
             'no' => array(
                 'price' => "",
-                'percent' =>""
-            ),                                                            
+                'percent' => ""
+            ),
         );
-        $guzzleClient = new \GuzzleHttp\Client(array( 'curl' => array( CURLOPT_SSL_VERIFYPEER => false, ), )); 
+        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
         $client->setClient($guzzleClient);
-        $crawler = $client->request('GET', 'https://steamdb.info/app/'. $steam_id .'/');
+        $crawler = $client->request('GET', 'https://steamdb.info/app/' . $steam_id . '/');
         //dd($crawler->html());
         // $crawler->filter(".cc")->each(function($node){
         //     echo ($node->html());
         // });
         // Get the based price
         //dd($crawler->html());
-        $crawler->filter('.owned')->each(function($node){
-            $node_parts = explode("\n",$node->text());
-            foreach($node_parts as $part){
-                if(strpos($part,"$") !== false){
+        $crawler->filter('.owned')->each(function ($node) {
+            $node_parts = explode("\n", $node->text());
+            foreach ($node_parts as $part) {
+                if (strpos($part, "$") !== false) {
                     $base_price = $part;
                 }
             }
         });
-        
+
         // Get another by region
         // Japanese Yen: jp
         // South Korean Won: kr
@@ -338,52 +338,95 @@ class PagesController extends Controller
         // Canadian Dollar: ca
         // British Pound: uk
         // Norwegian Krone: no
-        $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function($node){
+        $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function ($node) {
             return $node->text();
         });
-        foreach($text_tables as $text){
-            if(strstr($text,"Yen")){
-                $tokens = explode("\n",trim($text,"\""));
-                $region_prices['jp']['price'] = $tokens[4];
-                $region_prices['jp']['percent'] = $tokens[5];
+        foreach ($text_tables as $text) {
+            if (strstr($text, "Base Price")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[3],"N/A")){
+                    $region_prices['us']['price'] = "$9999";
+                    $region_prices['us']['percent'] = -99;
+                }else{
+                    $region_prices['us']['price'] = $tokens[3];
+                    $region_prices['us']['percent'] = -99;
+                }
             }
-            if(strstr($text,"South Korean Won")){
-                $tokens = explode("\n",trim($text,"\""));
-                $region_prices['kr']['price'] = $tokens[4];
-                $region_prices['kr']['percent'] = $tokens[5];
+            if (strstr($text, "Yen")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['jp']['price'] = "$9999";
+                    $region_prices['jp']['percent'] = -99;
+                }else{
+                    $region_prices['jp']['price'] = $tokens[4];
+                    $region_prices['jp']['percent'] = $tokens[5];
+                }
+
             }
-            if(strstr($text,"New Zealand Dollar")){
-                $tokens = explode("\n",trim($text,"\""));
-                $region_prices['nz']['price'] = $tokens[4];
-                $region_prices['nz']['percent'] = $tokens[5];
+            if (strstr($text, "South Korean Won")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['kr']['price'] = "$9999";
+                    $region_prices['kr']['percent'] = -99;
+                }else{
+                    $region_prices['kr']['price'] = $tokens[4];
+                    $region_prices['kr']['percent'] = $tokens[5];
+                }
             }
-            if(strstr($text,"Canadian Dollar")){
-                $tokens = explode("\n",trim($text,"\""));
-                $region_prices['ca']['price'] = $tokens[4];
-                $region_prices['ca']['percent'] = $tokens[5];
+            if (strstr($text, "New Zealand Dollar")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['nz']['price'] = "$9999";
+                    $region_prices['nz']['percent'] = -99;
+                }else{
+                    $region_prices['nz']['price'] = $tokens[4];
+                    $region_prices['nz']['percent'] = $tokens[5];
+                }
             }
-            if(strstr($text,"British Pound")){
-                $tokens = explode("\n",trim($text,"\""));
-                $region_prices['uk']['price'] = $tokens[4];
-                $region_prices['uk']['percent'] = $tokens[5];
+            if (strstr($text, "Canadian Dollar")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['ca']['price'] = "$9999";
+                    $region_prices['ca']['percent'] = -99;
+                }else{
+                    $region_prices['ca']['price'] = $tokens[4];
+                    $region_prices['ca']['percent'] = $tokens[5];
+                }
             }
-            if(strstr($text,"Norwegian Krone")){
-                $tokens = explode("\n",trim($text,"\""));
-                $region_prices['no']['price'] = $tokens[4];
-                $region_prices['no']['percent'] =  $tokens[5];
-            }             
+            if (strstr($text, "British Pound")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['uk']['price'] = "$9999";
+                    $region_prices['uk']['percent'] = -99;
+                }else{
+                    $region_prices['uk']['price'] = $tokens[4];
+                    $region_prices['uk']['percent'] = $tokens[5];
+                }
+            }
+            if (strstr($text, "Norwegian Krone")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['no']['price'] = "$9999";
+                    $region_prices['no']['percent'] = -99;
+                }else{
+                    $region_prices['no']['price'] = $tokens[4];
+                    $region_prices['no']['percent'] = $tokens[5];
+                }
+            }
         }
         $percent_price = array();
-        foreach($region_prices as $price){
-            if($this->convertPercent2Int($price['percent']) > -13 ){
-                $price['price'] = floatval(str_replace("$","",$price['price']));
-                array_push($percent_price,$price);
+        foreach ($region_prices as $price) {
+            if ($this->convertPercent2Int($price['percent']) > -13) {
+                $price['price'] = floatval(str_replace("$", "", $price['price']));
+                array_push($percent_price, $price);
             }
         }
-        $max = $percent_price[0]['price'];
-        for($i=0;$i<count($percent_price);$i++){
-            for($j=$i+1;$j<count($percent_price);$j++){
-                if($percent_price[$i]['price'] > $percent_price[$j]['price']){
+        $region_prices['us']['price'] = str_replace("$", "", $region_prices['us']['price']);
+        array_push($percent_price,$region_prices['us']);
+        $region_prices['us']['price'] = "$". $region_prices['us']['price'];
+        for ($i = 0; $i < count($percent_price); $i++) {
+            for ($j = $i + 1; $j < count($percent_price); $j++) {
+                if ($percent_price[$i]['price'] > $percent_price[$j]['price']) {
                     $temp = $percent_price[$i];
                     $percent_price[$i] = $percent_price[$j];
                     $percent_price[$j] = $temp;
@@ -391,14 +434,16 @@ class PagesController extends Controller
             }
         }
         $mlinh = $percent_price[0]['price'];
-        $percent_price[0]['price'] = "$".$percent_price[0]['price'];
-        $chosen_region = array_search($percent_price[0],$region_prices);
-        $final_price = floatval($mlinh)*22000;
 
-		$res = array(
-			'chosen_region' => $chosen_region,
-			'final_price'   => $final_price
-		);
+        $percent_price[0]['price'] = "$" . $percent_price[0]['price'];
+        $chosen_region = array_search($percent_price[0], $region_prices);
+        $final_price = floatval($mlinh) * 22000;
+
+        $res = array(
+            'chosen_region' => $chosen_region,
+            'final_price' => $final_price
+        );
+
         return $res;
     }
 
