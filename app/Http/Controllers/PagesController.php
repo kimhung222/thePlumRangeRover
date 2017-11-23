@@ -311,7 +311,11 @@ class PagesController extends Controller
             'no' => array(
                 'price' => "",
                 'percent' => ""
-            ),
+			),
+			'pk' => array(
+				'price' => "",
+				'percent' => ""
+			)
         );
         $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
         $client->setClient($guzzleClient);
@@ -340,8 +344,26 @@ class PagesController extends Controller
         // Norwegian Krone: no
         $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function ($node) {
             return $node->text();
-        });
+		});
+		$baseVN = -1;
         foreach ($text_tables as $text) {
+            if (strstr($text, "Vietnamese Dong")) {
+				$tokens = explode("\n", trim($text, "\""));
+                if(!strstr($tokens[3],"N/A")){
+					$vnRawPrice = explode("₫",$tokens[3]);
+					$baseVN = str_replace(" ","",$vnRawPrice[0]);
+                }
+			}
+			if (strstr($text, "South Asia - U.S. Dollar")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[3],"N/A")){
+                    $region_prices['pk']['price'] = "$9999";
+                    $region_prices['pk']['percent'] = -99;
+                }else{
+                    $region_prices['pk']['price'] = $tokens[4];
+                    $region_prices['pk']['percent'] = $tokens[5];
+                }
+            }
             if (strstr($text, "Base Price")) {
                 $tokens = explode("\n", trim($text, "\""));
                 if(strstr($tokens[3],"N/A")){
@@ -413,7 +435,10 @@ class PagesController extends Controller
                     $region_prices['no']['percent'] = $tokens[5];
                 }
             }
-        }
+		}
+		if($baseVN!=-1){
+			$baseVN = intval($baseVN);
+		}
         $percent_price = array();
         foreach ($region_prices as $price) {
             if ($this->convertPercent2Int($price['percent']) > -13) {
@@ -434,16 +459,17 @@ class PagesController extends Controller
             }
         }
         $mlinh = $percent_price[0]['price'];
-
         $percent_price[0]['price'] = "$" . $percent_price[0]['price'];
         $chosen_region = array_search($percent_price[0], $region_prices);
         $final_price = floatval($mlinh) * 22000;
-
+		if($baseVN!=-1 && $final_price>$baseVN){
+			$chosen_region = 'VN';
+			$final_price = $baseVN;
+		}
         $res = array(
             'chosen_region' => $chosen_region,
             'final_price' => $final_price
         );
-
         return $res;
     }
 
