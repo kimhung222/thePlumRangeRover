@@ -125,8 +125,12 @@ class PagesController extends Controller
 		$name = $data[$game_id]['data']['name'];
 		$background = $data[$game_id]['data']['background'];
 		$res = $this->comparePrice($steam_id);
-		$price = intval(($res['final_price'])/1000);
-		$price = $price + (5 - $price % 5);
+		if(!$res['chosen_region']=='VN'){
+			$price = intval(($res['final_price'])/1000);
+			$price = $price + (5 - $price % 5);
+		}else{
+			$price = intval(($res['final_price'])/1000);
+		}
 		$card_price = round($price*1.25);
 		$card_price = $card_price + (10 - $card_price%10);
 		$name = $name . ' ' . $res['chosen_region'];
@@ -441,7 +445,7 @@ class PagesController extends Controller
 		}
         $percent_price = array();
         foreach ($region_prices as $price) {
-            if ($this->convertPercent2Int($price['percent']) > -13) {
+            if ($this->convertPercent2Int($price['percent']) > -12.6) {
                 $price['price'] = floatval(str_replace("$", "", $price['price']));
                 array_push($percent_price, $price);
             }
