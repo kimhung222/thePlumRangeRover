@@ -44,7 +44,7 @@
                                 @if($j===0)
                                     <div class="item active" style="background-image: url({{$popular_posts[$j]->carousel_img}});background-size:cover;background-repeat:no-repeat;">
                                 @else
-                                    <div class="item" style="background-image: url({{$popular_posts[$j]->carousel_img}});background-size:cover;background-repeat:no-repeat;">
+                                    <div class="item" style="background-image: url({{$popular_posts[$j]->carousel_img}});background-size:cover;background-repeat:no-repeat;background-position:center;">
                                 @endif
                                     <div class="row">
                                         <div class="container">
