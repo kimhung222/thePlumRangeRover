@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Request;
 use App\Http\Requests;
@@ -14,6 +12,7 @@ use App\Gerne;
 use App\Post;
 use Cookie;
 use DB;
+
 
 class PagesController extends Controller
 {
@@ -124,14 +123,20 @@ class PagesController extends Controller
 		$name = $data[$game_id]['data']['name'];
 		$background = $data[$game_id]['data']['background'];
 		$res = $this->comparePrice($steam_id);
-		if(!$res['chosen_region']=='VN'){
-			$price = intval(($res['final_price'])/1000);
-			$price = $price + (5 - $price % 5);
-		}else{
-			$price = intval(($res['final_price'])/1000);
-		}
-		$card_price = round($price*1.25);
-		$card_price = $card_price + (10 - $card_price%10);
+		if($res['final_price']==-1){
+            $price = intval($data[$game_id]['data']['price_overview']['final']/100000);
+            $card_price = round($price*1.25);
+            $card_price = $card_price + (10 - $card_price%10);
+        }else{
+            if(!strstr($res['chosen_region'],'VN')){
+                $price = intval(($res['final_price'])/1000);
+                //$price = $price + (10 - $price % 10);
+            }else{
+                $price = intval(($res['final_price'])/1000);
+            }
+            $card_price = round($price*1.25);
+            $card_price = $card_price + (10 - $card_price%10);
+        }
 		$name = $name . ' ' . $res['chosen_region'];
 		$comming_soon = $data[$game_id]['data']['release_date']['coming_soon'];
 		if($comming_soon){
@@ -318,19 +323,33 @@ class PagesController extends Controller
 			'pk' => array(
 				'price' => "",
 				'percent' => ""
+			),
+			'ph' => array(
+				'price' => "",
+				'percent' => ""
+			),
+			'id' => array(
+				'price' => "",
+				'percent' => ""
+			),
+			'my' => array(
+				'price' => "",
+				'percent' => ""
 			)
         );
-        $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
-		$client->setClient($guzzleClient);
-		$cookieJar = CookieJar::fromArray([
-			'cc' => 'vn'
-		], 'steamdb.info');
-	
-        $crawler = $client->request('GET', 'https://steamdb.info/app/' . $steam_id . '/'.'?cc=vn', ['cookies' => $cookieJar]);
-        //dd($crawler->html());
-        // $crawler->filter(".cc")->each(function($node){
-        //     echo ($node->html());
-        // });
+        $cookieJar = CookieJar::fromArray([
+            'cc' => 'vn'
+        ], 'steamdb.info');
+        $guzzleClient = new \GuzzleHttp\Client(array(
+            'curl' => array(CURLOPT_SSL_VERIFYPEER => false,),
+            'headers' => ['cookie' => 'cc=vn;']
+            )
+        );
+        $client->setClient($guzzleClient);
+        $crawler = $client->request('GET', 'https://steamdb.info/app/' . $steam_id . '/',['cookies' => $cookieJar]);
+        //
+
+        //
         // Get the based price
         //dd($crawler->html());
         $crawler->filter('.owned')->each(function ($node) {
@@ -348,11 +367,14 @@ class PagesController extends Controller
         // New Zealand Dollar: nz
         // Canadian Dollar: ca
         // British Pound: uk
-        // Norwegian Krone: no
+		// Norwegian Krone: no
+		// Phillippine Peso: ph
+		// Indonesian Rupiah: id
+		// Malaysian Ringgit: my
+		// South Asia - U.S. Dollar : pk
         $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function ($node) {
             return $node->text();
 		});
-		dd($text_tables);
 		$baseVN = -1;
         foreach ($text_tables as $text) {
             if (strstr($text, "Vietnamese Dong")) {
@@ -372,14 +394,14 @@ class PagesController extends Controller
                     $region_prices['pk']['percent'] = $tokens[5];
                 }
             }
-            if (strstr($text, "Base Price")) {
+            if (strstr($text, "U.S. Dollar") && !strstr($text, "South Asia") && !strstr($text, "CIS") ) {
                 $tokens = explode("\n", trim($text, "\""));
                 if(strstr($tokens[3],"N/A")){
                     $region_prices['us']['price'] = "$9999";
                     $region_prices['us']['percent'] = -99;
                 }else{
-                    $region_prices['us']['price'] = $tokens[3];
-                    $region_prices['us']['percent'] = -99;
+                    $region_prices['us']['price'] = $tokens[4];
+                    $region_prices['us']['percent'] = $tokens[5];
                 }
             }
             if (strstr($text, "Yen")) {
@@ -442,21 +464,49 @@ class PagesController extends Controller
                     $region_prices['no']['price'] = $tokens[4];
                     $region_prices['no']['percent'] = $tokens[5];
                 }
+			}
+			if (strstr($text, "Philippine Peso")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['ph']['price'] = "$9999";
+                    $region_prices['ph']['percent'] = -99;
+                }else{
+                    $region_prices['ph']['price'] = $tokens[4];
+                    $region_prices['ph']['percent'] = $tokens[5];
+                }
+			}
+			if (strstr($text, " Indonesian Rupiah")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['id']['price'] = "$9999";
+                    $region_prices['id']['percent'] = -99;
+                }else{
+                    $region_prices['id']['price'] = $tokens[4];
+                    $region_prices['id']['percent'] = $tokens[5];
+                }
+			}
+			if (strstr($text, "Malaysian Ringgit")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['my']['price'] = "$9999";
+                    $region_prices['my']['percent'] = -99;
+                }else{
+                    $region_prices['my']['price'] = $tokens[4];
+                    $region_prices['my']['percent'] = $tokens[5];
+                }
             }
 		}
 		if($baseVN!=-1){
-			$baseVN = intval($baseVN*22/22.717)*1000;
+			$baseVN = intval($baseVN);
 		}
         $percent_price = array();
         foreach ($region_prices as $price) {
             if ($this->convertPercent2Int($price['percent']) > -12.6) {
-                $price['price'] = floatval(str_replace("$", "", $price['price']));
+                //$price['price'] = floatval(str_replace("$", "", $price['price']));
+                $price['price'] = $this->convertVND($price['price']);
                 array_push($percent_price, $price);
             }
         }
-        $region_prices['us']['price'] = str_replace("$", "", $region_prices['us']['price']);
-        array_push($percent_price,$region_prices['us']);
-        $region_prices['us']['price'] = "$". $region_prices['us']['price'];
         for ($i = 0; $i < count($percent_price); $i++) {
             for ($j = $i + 1; $j < count($percent_price); $j++) {
                 if ($percent_price[$i]['price'] > $percent_price[$j]['price']) {
@@ -466,10 +516,23 @@ class PagesController extends Controller
                 }
             }
         }
+        if(!count($percent_price)){
+            return array(
+                'final_price' => -1,
+                'chosen_region' => 'Steam'
+            );
+        }
         $mlinh = $percent_price[0]['price'];
-        $percent_price[0]['price'] = "$" . $percent_price[0]['price'];
-        $chosen_region = array_search($percent_price[0], $region_prices);
-        $final_price = floatval($mlinh) * 22000;
+
+        foreach ($region_prices as $rprice)
+       {
+            if($percent_price[0]['percent']==$rprice['percent'] && $percent_price[0]['price']== $this->convertVND($rprice['price']))
+            {
+                $chosen_region = array_search($rprice,$region_prices);
+                break;
+            }
+        }
+        $final_price = $mlinh;
 		if($baseVN!=-1 && $final_price>$baseVN){
 			$chosen_region = 'VN';
 			$final_price = $baseVN;
@@ -478,7 +541,7 @@ class PagesController extends Controller
             'chosen_region' => $chosen_region,
             'final_price' => $final_price
         );
-        return $res;
+		return $res;
     }
 
     public function removeHtmlTag( $s){
@@ -518,6 +581,13 @@ class PagesController extends Controller
         return floatval($number);
     }
 
+    public function convertVND($number){
+        $number = str_replace('₫','',$number);
+        $number = str_replace(' ','',$number);
+        $number = floatval($number);
+        return $number;
+
+    }
     public function roundPrice($number){
         $number = round(intval($number)/1000);
         $balance = $number % 10;

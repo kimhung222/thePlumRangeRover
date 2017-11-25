@@ -44,7 +44,7 @@
                                 @if($j===0)
                                     <div class="item active" style="background-image: url({{$popular_posts[$j]->carousel_img}});background-size:cover;background-repeat:no-repeat;">
                                 @else
-                                    <div class="item" style="background-image: url({{$popular_posts[$j]->carousel_img}});background-size:cover;background-repeat:no-repeat;">
+                                    <div class="item" style="background-image: url({{$popular_posts[$j]->carousel_img}});background-size:cover;background-repeat:no-repeat;background-position:center;">
                                 @endif
                                     <div class="row">
                                         <div class="container">
@@ -54,7 +54,7 @@
                                             <div class="col-md-9 text-left">
                                                 <span data-animation="animated bounceInDown" style="font-family:Bangers;color:rgba(231, 76, 60,1.0);font-size:50px;background-color:rgba(236, 240, 241,0.7);padding:15px;">{{$popular_posts[$j]->name}}</span>
                                                     <div class="space-2"></div>
-                                                <span data-animation="animated bounceInUp" style="font-family:Quicksand;color:black;font-size:30px;background-color:rgba(236, 240, 241,1.0);padding:10px;">{{$popular_posts[$j]->current_price}}.000</span>
+                                                <span data-animation="animated bounceInUp" style="font-family:Quicksand;color:black;font-size:30px;background-color:rgba(236, 240, 241,1.0);padding:10px;">{{$popular_posts[$j]->current_price}}.000₫</span>
                                             </div>
                                         </div>
                                     </div>
@@ -113,11 +113,11 @@
                                                     <div class="row">
                                                         <div class="price" style="width:50%;padding-left: 10%">
                                                             <h5 class="price-text-color">
-                                                                {{$discount_posts[$i+$j]->current_price}}.000</h5>
+                                                                {{$discount_posts[$i+$j]->current_price}}.000₫</h5>
                                                         </div>
-                                                        <div class="price" style="width:50%;padding-left: 10%">
+                                                        <div class="price" style="width:50%;padding-left: 8%">
                                                             <h5 class="price-text-color">
-                                                                {{$discount_posts[$i+$j]->card_price}}.000(CARD)</h5>
+                                                                {{$discount_posts[$i+$j]->card_price}}.000₫(CARD)</h5>
                                                         </div>
                                                     </div>
                                                     <div class="separator clear-left">
@@ -162,11 +162,11 @@
                             <div class="row">
                                 <div class="price" style="width:50%;padding-left: 10%">
                                         <h5 class="price-text-color">
-                                            {{$p->current_price}}.000</h5>
+                                            {{$p->current_price}}.000₫</h5>
                                 </div>
-                                <div class="price" style="width:50%;padding-left: 10%">
+                                <div class="price" style="width:50%;padding-left: 8%">
                                     <h5 class="price-text-color">
-                                        {{$p->card_price}}.000(CARD)</h5>
+                                        {{$p->card_price}}.000₫(CARD)</h5>
                                 </div>
                             </div>
                             <div class="separator clear-left">

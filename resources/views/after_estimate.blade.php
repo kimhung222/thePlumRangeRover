@@ -20,8 +20,8 @@
 			<div class="space-1"></div>
 			<img src="{{$header_image}}">
 			<div class="estimated-price">
-					<p>Giá chuyển khoản: {{$price}}.000</p>
-					<p>Giá Card        : {{$card_price}}.000</p>
+					<p>Giá chuyển khoản: {{$price}}.000 ₫</p>
+					<p>Giá Card        : {{$card_price}}.000 ₫</p>
 			</div>
 		</div>
 		<!-- <button class="btn btn-success"> Yêu cầu mua </button> </hr> -->
