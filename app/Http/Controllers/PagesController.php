@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Request;
@@ -131,7 +130,7 @@ class PagesController extends Controller
         }else{
             if(!strstr($res['chosen_region'],'VN')){
                 $price = intval(($res['final_price'])/1000);
-                $price = $price + (10 - $price % 10);
+                //$price = $price + (10 - $price % 10);
             }else{
                 $price = intval(($res['final_price'])/1000);
             }
@@ -324,6 +323,18 @@ class PagesController extends Controller
 			'pk' => array(
 				'price' => "",
 				'percent' => ""
+			),
+			'ph' => array(
+				'price' => "",
+				'percent' => ""
+			),
+			'id' => array(
+				'price' => "",
+				'percent' => ""
+			),
+			'my' => array(
+				'price' => "",
+				'percent' => ""
 			)
         );
         $cookieJar = CookieJar::fromArray([
@@ -356,7 +367,11 @@ class PagesController extends Controller
         // New Zealand Dollar: nz
         // Canadian Dollar: ca
         // British Pound: uk
-        // Norwegian Krone: no
+		// Norwegian Krone: no
+		// Phillippine Peso: ph
+		// Indonesian Rupiah: id
+		// Malaysian Ringgit: my
+		// South Asia - U.S. Dollar : pk
         $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function ($node) {
             return $node->text();
 		});
@@ -448,6 +463,36 @@ class PagesController extends Controller
                 }else{
                     $region_prices['no']['price'] = $tokens[4];
                     $region_prices['no']['percent'] = $tokens[5];
+                }
+			}
+			if (strstr($text, "Philippine Peso")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['ph']['price'] = "$9999";
+                    $region_prices['ph']['percent'] = -99;
+                }else{
+                    $region_prices['ph']['price'] = $tokens[4];
+                    $region_prices['ph']['percent'] = $tokens[5];
+                }
+			}
+			if (strstr($text, " Indonesian Rupiah")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['id']['price'] = "$9999";
+                    $region_prices['id']['percent'] = -99;
+                }else{
+                    $region_prices['id']['price'] = $tokens[4];
+                    $region_prices['id']['percent'] = $tokens[5];
+                }
+			}
+			if (strstr($text, "Malaysian Ringgit")) {
+                $tokens = explode("\n", trim($text, "\""));
+                if(strstr($tokens[4],"N/A")){
+                    $region_prices['my']['price'] = "$9999";
+                    $region_prices['my']['percent'] = -99;
+                }else{
+                    $region_prices['my']['price'] = $tokens[4];
+                    $region_prices['my']['percent'] = $tokens[5];
                 }
             }
 		}
