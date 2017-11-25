@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 use GuzzleHttp\Client as GuzzleClient;
-use Illuminate\Cookie\CookieJar;
+use GuzzleHttp\Cookie\CookieJar;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Requirement;
@@ -14,7 +14,6 @@ use App\Gerne;
 use App\Post;
 use Cookie;
 use DB;
-
 
 class PagesController extends Controller
 {
@@ -322,8 +321,12 @@ class PagesController extends Controller
 			)
         );
         $guzzleClient = new \GuzzleHttp\Client(array('curl' => array(CURLOPT_SSL_VERIFYPEER => false,),));
-        $client->setClient($guzzleClient);
-        $crawler = $client->request('GET', 'https://steamdb.info/app/' . $steam_id . '/');
+		$client->setClient($guzzleClient);
+		$cookieJar = CookieJar::fromArray([
+			'cc' => 'vn'
+		], 'steamdb.info');
+	
+        $crawler = $client->request('GET', 'https://steamdb.info/app/' . $steam_id . '/'.'?cc=vn', ['cookies' => $cookieJar]);
         //dd($crawler->html());
         // $crawler->filter(".cc")->each(function($node){
         //     echo ($node->html());
@@ -349,6 +352,7 @@ class PagesController extends Controller
         $text_tables = $crawler->filter('.table-prices > tbody > tr')->each(function ($node) {
             return $node->text();
 		});
+		dd($text_tables);
 		$baseVN = -1;
         foreach ($text_tables as $text) {
             if (strstr($text, "Vietnamese Dong")) {
@@ -441,7 +445,7 @@ class PagesController extends Controller
             }
 		}
 		if($baseVN!=-1){
-			$baseVN = intval($baseVN);
+			$baseVN = intval($baseVN*22/22.717)*1000;
 		}
         $percent_price = array();
         foreach ($region_prices as $price) {
